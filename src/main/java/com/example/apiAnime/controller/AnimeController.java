@@ -1,13 +1,12 @@
 package com.example.apiAnime.controller;
 
+import com.example.apiAnime.domain.dto.AnimeError;
 import com.example.apiAnime.domain.model.Anime;
 import com.example.apiAnime.repository.AnimeRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -24,21 +23,34 @@ public class AnimeController {
     }
 
     @GetMapping("/")
-    public List<Anime> findAllMovies(){
+    public List<Anime> findAllAnimes(){
         return animeRepository.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAnime(@PathVariable UUID id){
         Anime anime = animeRepository.findById(id).orElse(null);
-        if(anime==null) return ResponseEntity.notFound().build();
+
+        if(anime==null) return //ResponseEntity.notFound().build();
+        ResponseEntity.status(HttpStatus.NOT_FOUND).body(AnimeError.message("No s'ha trobat l'anime amb l'id '" + id + "'"));
         return ResponseEntity.ok().body(anime);
     }
-    /*@GetMapping("/java")
-    public String talycual2(){
-        return "D O L O R";
-    }
-    @PostMapping("/")
-    public Anime createMovie(@RequestBody Anime movie){return animeRepository.save(movie);}*/
 
+    @PostMapping("/")
+    public ResponseEntity<?> createAnime(@RequestBody Anime anime){
+        if (animeRepository.findByName(anime.getName()) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(AnimeError.message("Ja existeix un anime amb el nom '"+anime.name+"'"));
+        }
+        return ResponseEntity.ok().body(animeRepository.save(anime));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAnime(@PathVariable UUID id) {
+        Anime anime = animeRepository.findById(id).orElse(null);
+        if (anime != null) {
+            animeRepository.delete(anime);
+            return  ResponseEntity.ok().body(AnimeError.message("S'ha eliminat l'anime amd id " + "'" + id + "'"));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(AnimeError.message("No s'ha trobat l'anime amb id '" + id + "'"));
+    }
 }
