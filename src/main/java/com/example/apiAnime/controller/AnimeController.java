@@ -1,7 +1,9 @@
 package com.example.apiAnime.controller;
 
 import com.example.apiAnime.domain.dto.AnimeError;
+import com.example.apiAnime.domain.dto.ResponseList;
 import com.example.apiAnime.domain.model.Anime;
+import com.example.apiAnime.domain.model.projection.AnimeProjection;
 import com.example.apiAnime.repository.AnimeRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,8 +25,11 @@ public class AnimeController {
     }
 
     @GetMapping("/")
-    public List<Anime> findAllAnimes(){
+    /*public List<Anime> findAllAnimes(){
         return animeRepository.findAll();
+    }*/
+    public ResponseEntity<?> findAllAnimes(){
+        return ResponseEntity.ok().body(animeRepository.findBy(AnimeProjection.class));
     }
 
     @GetMapping("/{id}")
