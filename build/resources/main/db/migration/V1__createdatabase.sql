@@ -27,15 +27,20 @@ CREATE TABLE IF NOT EXISTS anime_genre (
     genreid uuid REFERENCES genre(genreid) ON DELETE CASCADE,
     PRIMARY KEY (animeid, genreid));
 
-CREATE TABLE file (
+CREATE TABLE IF NOT EXISTS file (
     fileid UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     contenttype TEXT,
     data bytea);
 
-CREATE TABLE animeuser (
+CREATE TABLE IF NOT EXISTS animeuser (
     userid uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     username varchar(24) NOT NULL UNIQUE,
     password varchar(255) NOT NULL,
     role varchar(10),
     enabled boolean DEFAULT true
   );
+
+CREATE TABLE IF NOT EXISTS favourite (
+    animeid uuid REFERENCES anime(animeid) ON DELETE CASCADE,
+    userid uuid REFERENCES animeuser(userid) ON DELETE CASCADE,
+    PRIMARY KEY (animeid, userid));

@@ -10,7 +10,12 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
 
     User findByUsername(String username);
-    UserProjection findProjectionByUsername(String username);
+
+    void deleteById(UUID id);
+
+    <T> List<T> findByUsername(String username, Class<T> type);
+
     List<UserProjection> findBy();
+
 }
 

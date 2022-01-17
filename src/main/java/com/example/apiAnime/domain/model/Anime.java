@@ -28,6 +28,10 @@ public class Anime {
     @JoinTable(name = "anime_genre", joinColumns = @JoinColumn(name ="animeid"), inverseJoinColumns = @JoinColumn(name = "genreid"))
     public Set<Genre> genres;
 
+    @ManyToMany
+    @JoinTable(name = "favourite", joinColumns = @JoinColumn(name ="animeid"), inverseJoinColumns = @JoinColumn(name = "userid"))
+    public Set<User> favoritedby;
+
     public UUID getAnimeid() {
         return animeid;
     }

@@ -36,3 +36,6 @@ INSERT INTO anime_genre VALUES
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 INSERT INTO animeuser (username, password) VALUES ('user', crypt('pass', gen_salt('bf')));
+
+INSERT INTO favourite VALUES
+    ((SELECT animeid FROM anime WHERE name='Evangelion'),(SELECT userid FROM animeuser WHERE username = 'user'));

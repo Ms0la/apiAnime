@@ -3,6 +3,7 @@ package com.example.apiAnime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,11 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().csrf().disable()
                 .authorizeRequests()
-                .mvcMatchers("/users/")
-                .permitAll()
-                .anyRequest()
-                .permitAll()
-               // .authenticated()
+                .mvcMatchers("/users/register/web", "/users/all").permitAll()
+                .mvcMatchers(HttpMethod.POST,"/users/register").permitAll()
+                .mvcMatchers("/users/favourites").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic();
     }
@@ -46,4 +46,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authoritiesByUsernameQuery("select username, role from usser where username = ?")
                 .passwordEncoder(getPasswordEncoder());
     }
+
 }
