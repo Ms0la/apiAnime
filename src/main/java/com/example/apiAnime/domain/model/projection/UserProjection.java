@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface UserProjection {
     UUID getUserid();
     String getUsername();
+    String getPassword();
 }
