@@ -1,12 +1,15 @@
 package com.example.apiAnime.controller;
 
 import com.example.apiAnime.domain.dto.AnimeError;
+import com.example.apiAnime.domain.dto.RequestFavourite;
 import com.example.apiAnime.domain.dto.UserRegisterRequest;
 import com.example.apiAnime.domain.model.Anime;
+import com.example.apiAnime.domain.model.Favourite;
 import com.example.apiAnime.domain.model.User;
 import com.example.apiAnime.domain.model.projection.UserFavouritesProjection;
 import com.example.apiAnime.domain.model.projection.UserProjection;
 import com.example.apiAnime.repository.AnimeRepository;
+import com.example.apiAnime.repository.FavouriteRepository;
 import com.example.apiAnime.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +27,8 @@ public class UserController {
 
     @Autowired private UserRepository userRepository;
     @Autowired private AnimeRepository animeRepository;
-   
+    @Autowired private FavouriteRepository favouriteRepository;
+
     @Autowired private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/")
@@ -88,7 +92,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(AnimeError.message("No autorizado"));
     }
 
+    @PostMapping("/favorites")
+    public ResponseEntity<?> addFavorite(@RequestBody RequestFavourite requestFavorite, Authentication authentication) {
+        if (authentication != null) {
+            User authenticatedUser = userRepository.findByUsername(authentication.getName());
 
+            if (authenticatedUser != null) {
+                Favourite favorite = new Favourite();
+                favorite.movieid = requestFavorite.animeid;
+                favorite.userid = authenticatedUser.userid;
+                favouriteRepository.save(favorite);
+                return ResponseEntity.ok().build();
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(AnimeError.message("No autorizado"));
+    }
 
 
 
